@@ -9,13 +9,14 @@ from telegram.ext import (
     Updater,
 )
 import time
-from DictOfPeople import people_images, lst_names, basic_url
+from DictOfPeople import people_images, lst_names, basic_url, lst_of_cheers
 from PixledPhoto import pixelate_image
 import bot_settings
 import io
 from datetime import datetime
 
-INIT_PIX_SIZE = 13
+INIT_PIX_SIZE = 15
+INIT_SCORE = 5
 logging.basicConfig(
     format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
     level=logging.INFO,
@@ -44,6 +45,8 @@ def game(update: Update, context: CallbackContext):
     name_from_lst = random.choice(context.user_data["lst"])
     context.user_data["name"] = name_from_lst
     context.user_data['pix_size'] = INIT_PIX_SIZE
+    context.user_data['score_for_pic'] = INIT_SCORE
+
     context.user_data["lst"].remove(name_from_lst)
     pic_to_pix = people_images[name_from_lst]
     response = pixelate_image(pic_to_pix, context.user_data['pix_size'])
@@ -66,7 +69,7 @@ def respond(update: Update, context: CallbackContext):
     current_score = context.user_data.get("total", 0)
     sent_time = message_times[chat_id]
     response_time = datetime.now().timestamp() - sent_time.timestamp()
-    score_to_add = 5
+    score_to_add = context.user_data['score_for_pic']
     path = basic_url + context.user_data["name"] + ".jpg"
     if text == context.user_data["name"]:
         response = '🥳'
@@ -86,13 +89,16 @@ def respond(update: Update, context: CallbackContext):
         pic_after_hint = pixelate_image(path, context.user_data['pix_size'])
         save_path = basic_url + 'pixled\\' + context.user_data["name"] + ".jpg"
         pic_after_hint.save(save_path)
+        while context.user_data['score_for_pic'] > 0:
+            context.user_data['score_for_pic'] -= 1
 
+        response = random.choice(lst_of_cheers)
+        context.bot.send_message(chat_id=chat_id, text=response)
+        time.sleep(1)
         with open(save_path, 'rb') as photo:
             context.bot.send_photo(chat_id=chat_id, photo=photo)
-        response = 'נסה שוב'
-        time.sleep(1)
 
-        context.bot.send_message(chat_id=chat_id, text=response)
+
 
 
 my_bot = Updater(token=bot_settings.BOT_TOKEN, use_context=True)
