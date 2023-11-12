@@ -24,7 +24,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-keyboard = [[InlineKeyboardButton("PHOTO", callback_data="PHOTO")], [InlineKeyboardButton("START", callback_data="START")]]
+keyboard = [[InlineKeyboardButton("PHOTO", callback_data="PHOTO")]]
 reply = ReplyKeyboardMarkup(keyboard)
 
 
@@ -33,8 +33,8 @@ def start(update: Update, context: CallbackContext):
     logger.info(f"> Start chat #{chat_id}")
     reset(update, context)
     context.user_data["lst"] = lst_names.copy()
-    context.bot.send_message(chat_id=chat_id, text="please choose 'START' if you want to start", reply_markup=reply)
-    context.bot.send_message(chat_id=chat_id, text="please choose 'photo' if you want to play", reply_markup=reply)
+    #context.bot.send_message(chat_id=chat_id, text="please choose 'START' if you want to start", reply_markup=reply)
+    context.bot.send_message(chat_id=chat_id, text="please choose /photo if you want to play")
 
 
 message_times = {}
