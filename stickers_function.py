@@ -6,4 +6,4 @@ def send_local_png_as_sticker(update, context,file_name) -> None:
     file_path = r'C:\Users\user\Downloads\stickers'
 
     with open(fr"{file_path}\{file_name}", 'rb') as file:
-        sticker = context.bot.send_sticker(chat_id=chat_id, sticker=file)
+        context.bot.send_sticker(chat_id=chat_id, sticker=file)
