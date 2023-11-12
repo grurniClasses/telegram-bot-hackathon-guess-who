@@ -85,7 +85,7 @@ def respond(update: Update, context: CallbackContext):
         context.bot.send_message(chat_id=chat_id, text=f"your score is {new_score}\n")
         game(update, context)
     else:
-        context.user_data['pix_size'] += 2
+        context.user_data['pix_size'] += 4
         pic_after_hint = pixelate_image(path, context.user_data['pix_size'])
         save_path = basic_url + 'pixled\\' + context.user_data["name"] + ".jpg"
         pic_after_hint.save(save_path)
