@@ -1,9 +1,9 @@
-# 🚧 YOUR BOT NAME HERE
+# 🚧 Hyde
 
 ## The Team
-- 🚧 Participant 1 Name
-- 🚧 Participant 2 Name
-- 🚧 Participant 3 Name
+- 🚧 Doron
+- 🚧 Yael
+- 🚧 Hadas
 
 ## About this bot
 
