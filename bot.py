@@ -9,7 +9,7 @@ from telegram.ext import (
     Updater,
 )
 import time
-from DictOfPeople import people_images, lst_names, basic_url, lst_of_cheers
+from DictOfPeople import people_images, lst_names, basic_url, lst_of_cheers, hint_0
 from PixledPhoto import pixelate_image
 import bot_settings
 import io
@@ -46,7 +46,7 @@ def game(update: Update, context: CallbackContext):
     context.user_data["name"] = name_from_lst
     context.user_data['pix_size'] = INIT_PIX_SIZE
     context.user_data['score_for_pic'] = INIT_SCORE
-
+    hint = hint_0(context.user_data["name"])
     context.user_data["lst"].remove(name_from_lst)
     pic_to_pix = people_images[name_from_lst]
     response = pixelate_image(pic_to_pix, context.user_data['pix_size'])
@@ -55,7 +55,7 @@ def game(update: Update, context: CallbackContext):
     message_times[chat_id] = datetime.now()
     with open(save_path, 'rb') as photo:
         context.bot.send_photo(chat_id=chat_id, photo=photo)
-
+    context.bot.send_message(chat_id=chat_id, text = hint)
 
 def reset(update: Update, context: CallbackContext) -> int:
     # Reset the total
