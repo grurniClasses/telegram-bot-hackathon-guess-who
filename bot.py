@@ -1,3 +1,4 @@
+
 import logging
 import random
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
@@ -8,21 +9,7 @@ from telegram.ext import (
     Filters,
     Updater,
     CallbackQueryHandler,
-)
-import time
-from DictOfPeople import people_images, lst_names, basic_url, lst_of_cheers, hint_0
-from PixledPhoto import pixelate_image
-import bot_settings
-import logging
-import random
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
-from telegram.ext import (
-    CommandHandler,
-    CallbackContext,
-    MessageHandler,
-    Filters,
-    Updater,
-    CallbackQueryHandler,
+JobQueue
 )
 import time
 from DictOfPeople import people_images, lst_names, basic_url, lst_of_cheers, hint_0
@@ -63,6 +50,7 @@ message_times = {}
 
 def game(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
+    context.bot.send_message(chat_id=chat_id, text="... ")
     if not context.user_data['lst']:
         context.bot.send_message(chat_id=chat_id, text=f"the game ended. your total score is {context.user_data['total']}. 🥳")
     else:
@@ -87,6 +75,19 @@ def reset(update: Update, context: CallbackContext) -> int:
     # Reset the total
     context.user_data["lst"] = lst_names.copy()
 
+def send_score(context: CallbackContext):
+    # with open(context.user_data["photo_path"], 'rb') as photo:
+    #     context.bot.send_photo(chat_id=chat_id, photo=photo)
+    #     # context.bot.send_message(chat_id=chat_id, text=f"your score is {new_score}\n"
+    #
+    # game(update, context)
+    context, chat_id, update, path=context.job.context
+    context.bot.send_message(chat_id=chat_id, text=f"your score is {context.user_data['total']}\n")
+    with open(path, 'rb') as photo:
+        context.bot.send_photo(chat_id=chat_id, photo=photo)
+def new_game (context: CallbackContext):
+    context, chat_id, update = context.job.context
+    game(update, context)
 
 def respond(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
@@ -104,37 +105,36 @@ def respond(update: Update, context: CallbackContext):
         new_score = current_score + score_to_add
         context.user_data["total"] = new_score
         context.bot.send_message(chat_id=chat_id, text=response)
-        time.sleep(1)
-        with open(path, 'rb') as photo:
-            context.bot.send_photo(chat_id=chat_id, photo=photo)
-        time.sleep(1)
-        context.bot.send_message(chat_id=chat_id, text=f"your score is {new_score}\n")
-        game(update, context)
+        context.job_queue.run_once(send_score, 1, context=(context, chat_id, update, path))
+
+
+        context.job_queue.run_once(new_game, 2, context=(context, chat_id, update))
     else:
-        if context.user_data['pix_size'] == INIT_PIX_SIZE + PIX_TO_ADD:
+        if context.user_data['pix_size'] == INIT_PIX_SIZE + 2*PIX_TO_ADD:
             with open(r"C:\Users\97252\Downloads\לא יהיה כלום, כי אין כלום!.png", 'rb') as file:
                 context.bot.send_sticker(chat_id=chat_id, sticker=file)
-                time.sleep(2)
-            game(update, context)
+            context.job_queue.run_once(new_game, 2, context=(context, chat_id, update))
         else:
-            context.bot.send_message(chat_id=chat_id, text = "נסה שוב, הפעם קל יותר")
-            context.user_data['pix_size'] += 2*PIX_TO_ADD
+            context.user_data['pix_size'] += PIX_TO_ADD
             pic_after_hint = pixelate_image(path, context.user_data['pix_size'])
             save_path = basic_url + 'pixled\\' + context.user_data["name"] + ".jpg"
             pic_after_hint.save(save_path)
-            while context.user_data['score_for_pic'] > 0:
+            if context.user_data['score_for_pic'] > 0:
                 context.user_data['score_for_pic'] -= 1
 
             response = random.choice(lst_of_cheers)
             context.bot.send_message(chat_id=chat_id, text=response)
-            time.sleep(1)
+            time.sleep(2)
+            #context.bot.send_message(chat_id=chat_id, text="נסה שוב, הפעם קל יותר")
             with open(save_path, 'rb') as photo:
                 context.bot.send_photo(chat_id=chat_id, photo=photo)
 
 
 
 
+
 my_bot = Updater(token=bot_settings.BOT_TOKEN, use_context=True)
+job_queue = my_bot.job_queue
 my_bot.dispatcher.add_handler(CommandHandler("start", start))
 my_bot.dispatcher.add_handler(CommandHandler("photo", game))
 my_bot.dispatcher.add_handler(MessageHandler(Filters.text, respond))
