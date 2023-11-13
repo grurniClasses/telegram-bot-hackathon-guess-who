@@ -6,9 +6,8 @@ basic_url = r"C:\Users\97252\Documents\בוטקאמפ\botP\ "
 basic_url = basic_url.rstrip()
 for name in lst_names:
     people_images[name] = basic_url + name + ".jpg"
-
+print(lst_of_cheers)
 def hint_0(name: str):
     index =name.find(' ')
     output_str = f"first name: {index} letters, last name: {len(name)- index-1} letters"
     return output_str
-print(people_images)
