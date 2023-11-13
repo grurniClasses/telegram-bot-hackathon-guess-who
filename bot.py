@@ -13,6 +13,21 @@ import time
 from DictOfPeople import people_images, lst_names, basic_url, lst_of_cheers, hint_0
 from PixledPhoto import pixelate_image
 import bot_settings
+import logging
+import random
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+from telegram.ext import (
+    CommandHandler,
+    CallbackContext,
+    MessageHandler,
+    Filters,
+    Updater,
+    CallbackQueryHandler,
+)
+import time
+from DictOfPeople import people_images, lst_names, basic_url, lst_of_cheers, hint_0
+from PixledPhoto import pixelate_image
+import bot_settings
 import io
 from datetime import datetime
 
@@ -119,4 +134,3 @@ logger.info("* Start polling...")
 my_bot.start_polling()  # Starts polling in a background thread.
 my_bot.idle()  # Wait until Ctrl+C is pressed
 logger.info("* Bye!")
-
