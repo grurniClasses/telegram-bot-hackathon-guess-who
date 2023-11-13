@@ -49,7 +49,12 @@ def start(update: Update, context: CallbackContext):
     logger.info(f"> Start chat #{chat_id}")
     reset(update, context)
     context.user_data["lst"] = lst_names.copy()
-    #context.bot.send_message(chat_id=chat_id, text="please choose 'START' if you want to start", reply_markup=reply)
+    context.bot.send_message(chat_id=chat_id, text="""ברוכים הבאים למשחק מי-זה??, במהלך המשחק תוצג דמות מוכרת עם תמונה מטושטשת
+    בנוסף תוצג הודעה עם מספר האותיות של שם הדמות. עליך לנחש ולרשום את שם הדמות בעברית. 
+    תשובה שגויה תזכה במשפט עידוד ובנסיון נוסף בה התמונה תוצג בצורה ברורה יותר.
+    לאחר 3 נסיונות שגויים, תועבר לשאלה הבאה.ניתן לדלג על התמונה ע"י לחיצנ על הלחצן PHOTO.
+     הניקוד מושפע ממהירות תגובתך וממספר הנסיונות
+    בהצלחה!!!!!!!!!""")
     context.bot.send_message(chat_id=chat_id, text="please choose /photo if you want to play")
 
 
