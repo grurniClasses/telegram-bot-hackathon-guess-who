@@ -58,22 +58,25 @@ message_times = {}
 
 def game(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
-    text = update.message.text
-    logger.info(f"= Got on chat #{chat_id}: {text!r}")
-    name_from_lst = random.choice(context.user_data["lst"])
-    context.user_data["name"] = name_from_lst
-    context.user_data['pix_size'] = INIT_PIX_SIZE
-    context.user_data['score_for_pic'] = INIT_SCORE
-    hint = hint_0(context.user_data["name"])
-    context.user_data["lst"].remove(name_from_lst)
-    pic_to_pix = people_images[name_from_lst]
-    response = pixelate_image(pic_to_pix, context.user_data['pix_size'])
-    save_path = basic_url + 'pixled\\' + context.user_data["name"] + ".jpg"
-    response.save(save_path)
-    message_times[chat_id] = datetime.now()
-    with open(save_path, 'rb') as photo:
-        context.bot.send_photo(chat_id=chat_id, photo=photo)
-    context.bot.send_message(chat_id=chat_id, text = hint)
+    if not context.user_data['lst']:
+        context.bot.send_message(chat_id=chat_id, text=f"the game ended. your total score is {context.user_data['total']}. 🥳")
+    else:
+        text = update.message.text
+        logger.info(f"= Got on chat #{chat_id}: {text!r}")
+        name_from_lst = random.choice(context.user_data["lst"])
+        context.user_data["name"] = name_from_lst
+        context.user_data['pix_size'] = INIT_PIX_SIZE
+        context.user_data['score_for_pic'] = INIT_SCORE
+        hint = hint_0(context.user_data["name"])
+        context.user_data["lst"].remove(name_from_lst)
+        pic_to_pix = people_images[name_from_lst]
+        response = pixelate_image(pic_to_pix, context.user_data['pix_size'])
+        save_path = basic_url + 'pixled\\' + context.user_data["name"] + ".jpg"
+        response.save(save_path)
+        message_times[chat_id] = datetime.now()
+        with open(save_path, 'rb') as photo:
+            context.bot.send_photo(chat_id=chat_id, photo=photo)
+        context.bot.send_message(chat_id=chat_id, text = hint)
 
 def reset(update: Update, context: CallbackContext) -> int:
     # Reset the total
@@ -109,6 +112,7 @@ def respond(update: Update, context: CallbackContext):
                 time.sleep(2)
             game(update, context)
         else:
+            context.bot.send_message(chat_id=chat_id, text = "נסה שוב, הפעם קל יותר")
             context.user_data['pix_size'] += 2*PIX_TO_ADD
             pic_after_hint = pixelate_image(path, context.user_data['pix_size'])
             save_path = basic_url + 'pixled\\' + context.user_data["name"] + ".jpg"
