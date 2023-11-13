@@ -1,5 +1,7 @@
 import logging
 import random
+from pathlib import Path
+
 from telegram import (
     Update,
     InlineKeyboardButton,
@@ -77,7 +79,9 @@ def game(update: Update, context: CallbackContext):
         context.user_data["lst"].remove(name_from_lst)
         pic_to_pix = people_images[name_from_lst]
         response = pixelate_image(pic_to_pix, context.user_data["pix_size"])
-        save_path = basic_url + "pixled\\" + context.user_data["name"] + ".jpg"
+        pixled_folder = Path(basic_url) / "pixled"
+        pixled_folder.mkdir(exist_ok=True)
+        save_path = pixled_folder / (context.user_data["name"] + ".jpg")
         response.save(save_path)
         message_times[chat_id] = datetime.now()
         with open(save_path, "rb") as photo:
@@ -150,27 +154,28 @@ def respond(update: Update, context: CallbackContext):
     else:
         if context.user_data["pix_size"] == INIT_PIX_SIZE + 2 * PIX_TO_ADD:
             context.job_queue.run_once(new_game, 2, context=(context, chat_id, update))
-        context.user_data["pix_size"] += PIX_TO_ADD
-        pic_after_hint = pixelate_image(path, context.user_data["pix_size"])
-        save_path = basic_url + "pixled\\" + context.user_data["name"] + ".jpg"
-        pic_after_hint.save(save_path)
-        if context.user_data["score_for_pic"] > 0:
-            context.user_data["score_for_pic"] -= 1
+        else:
+            context.user_data["pix_size"] += PIX_TO_ADD
+            pic_after_hint = pixelate_image(path, context.user_data["pix_size"])
+            save_path = basic_url + "pixled\\" + context.user_data["name"] + ".jpg"
+            pic_after_hint.save(save_path)
+            if context.user_data["score_for_pic"] > 0:
+                context.user_data["score_for_pic"] -= 1
 
-        cheer = str(random.randint(1, 9))
-        path_cheer = r"C:\Users\97252\Documents\בוטקאמפ\botP\encouragement"
-        with open(rf"{path_cheer}\{cheer}" + ".png", "rb") as file:
-            context.bot.send_sticker(chat_id=chat_id, sticker=file)
-        context.job_queue.run_once(
-            send_photo_again,
-            3,
-            context=(
-                context,
-                chat_id,
-                update,
-                save_path,
-            ),
-        )
+            cheer = str(random.randint(1, 9))
+            path_cheer = r"encouragement"
+            with open(rf"{path_cheer}/{cheer}" + ".png", "rb") as file:
+                context.bot.send_sticker(chat_id=chat_id, sticker=file)
+            context.job_queue.run_once(
+                send_photo_again,
+                3,
+                context=(
+                    context,
+                    chat_id,
+                    update,
+                    save_path,
+                ),
+            )
 
         # with open(save_path, 'rb') as photo:
         #     context.bot.send_photo(chat_id=chat_id, photo=photo)
