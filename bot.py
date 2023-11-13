@@ -94,7 +94,7 @@ def respond(update: Update, context: CallbackContext):
                 time.sleep(2)
             game(update, context)
         else:
-            context.user_data['pix_size'] += PIX_TO_ADD
+            context.user_data['pix_size'] += 2*PIX_TO_ADD
             pic_after_hint = pixelate_image(path, context.user_data['pix_size'])
             save_path = basic_url + 'pixled\\' + context.user_data["name"] + ".jpg"
             pic_after_hint.save(save_path)
