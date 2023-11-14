@@ -7,13 +7,20 @@
 
 ## About this bot
 
-🚧 ENTER DESCRIPTION HERE
+🚧 Our bot is a game of identifying famous people. Each time the bot sends a pixelated image of a celebrity and the participant guesses. If he is right, the bot will return a sticker of the famous person with a famous quote from him. If the participant made a mistake, he will receive a funny "encouragement" sentence. In addition, the bot updates the participant's score at each stage.
 
-🚧 YOU CAN ADD A t.me LINK TO THE BOT HERE
+🚧 https://t.me/HadasDoronYaelBot
 
-🚧 ADD SCREENSHOTS/GIFS/SCREENCAST HERE (REFER TO MARKDOWN'S SYNTAX FOR HELP ON DISPLAYING IMAGES)
+![start.png](screenshots%2Fstart.png)
+![menu.png](screenshots%2Fmenu.png)
+![introduction.png](screenshots%2Fintroduction.png)
+![first_photo.png](screenshots%2Ffirst_photo.png)
+![mistake.png](screenshots%2Fmistake.png)
+![success.png](screenshots%2Fsuccess.png)
+![second_photo.png](screenshots%2Fsecond_photo.png)
+![end_game.png](screenshots%2Fend_game.png)
 
-🚧 ADD ANY OTHER NOTES REGARDING THE BOT
+
  
 ## Instructions for Developers 
 ### Prerequisites
