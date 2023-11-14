@@ -43,6 +43,7 @@ def start(update: Update, context: CallbackContext):
     logger.info(f"> Start chat #{chat_id}")
     reset(update, context)
     context.user_data["lst"] = lst_names.copy()
+    context.user_data["total"] = 0
     context.bot.send_message(
         chat_id=chat_id,
         text="""ברוכים הבאים למשחק מי-זה??, במהלך המשחק תוצג דמות מוכרת עם תמונה מטושטשת
