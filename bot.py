@@ -25,8 +25,8 @@ import bot_settings
 import io
 from datetime import datetime
 
-INIT_PIX_SIZE = 15
-PIX_TO_ADD = 6
+INIT_PIX_SIZE = 20
+PIX_TO_ADD = 10
 INIT_SCORE = 5
 logging.basicConfig(
     format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
